@@ -1,9 +1,12 @@
 include_directories("include")
 
-set(SRCS "../src/ft_inet.cpp" "../src/socket_client.cpp" test.cpp)
+include ( CTest )
+enable_testing ()
 
-add_executable(test ${SRCS})
+set(SRCS "../src/ft_inet.cpp" "../src/socket_client.cpp" test_inet.cpp)
 
-target_link_libraries(test PRIVATE ${CMAKE_SOURCE_DIR}/libft/libft.a)
+add_executable(inet_test ${SRCS})
+
+target_link_libraries(inet_test PRIVATE ${CMAKE_SOURCE_DIR}/libft/libft.a)
 
 add_test(NAME mytest COMMAND test)

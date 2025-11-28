@@ -2,25 +2,28 @@
 #include "../include/libnet.hpp"
 
 
-#define  CHECK_PARAM(param,flag) (((param) & (flag)) == (flag))
-
-
-
-
-
-
 int main(void)
 {
-
+    
     Socket_client client(AF_INET, SOCK_STREAM, 0);
     struct sockaddr_in addr;
 
     client.print_socket_client();
     client.create();
 
-    addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = ft_inet_addr("10.10.10.10");
-    addr.sin_port = htons(1);
- 
-    return(1);
+    if(client.bind_server_data("192.168.1.147", 2022) < 0)
+        return(1);
+    if(client.connect_socket() < 0)
+    {
+        client.destoy();
+        printf("client cleaned\n");
+    }
+
+
+    while (1)
+    {
+        ::sleep(1);
+    }
+    
+    return(0);
 }
