@@ -1,6 +1,6 @@
 include_directories("include")
 
-set(SRCS ft_inet.cpp  main.cpp socket_client.cpp)
+set(SRCS ft_inet.cpp  main.cpp socket_client.cpp socket_serveur.cpp)
 
 add_executable(network ${SRCS})
 

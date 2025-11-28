@@ -11,12 +11,21 @@
 #include <fcntl.h>
 #include <iostream>
 #include <assert.h>
+#include <string.h>
 #include "libft.h"
 
 using namespace std;
 
 #define  CHECK_PARAM(param,flag) (((param) & (flag)) == (flag))
-#define BUFFER_SIZE 1024
+
+#define BUFFER_SIZE 4096
+
+#define CLOSE       0 
+#define OPEN        1
+#define WAIT        2
+#define CONNECTED   3
+#define ERROR       4
+
 
 class Socket_client
 {
@@ -30,6 +39,7 @@ class Socket_client
         int connect_socket();
         int bind_server_data(const char *addr, uint16_t  port);
         int send_raw_data();
+        int send_message(std::string );
         
     private:
 
@@ -38,7 +48,37 @@ class Socket_client
         int type_;
         int protocol_;
         struct sockaddr_in addr;
-        char buffer[BUFFER_SIZE];
+        char read_buffer[BUFFER_SIZE];
+        char write_buffer[BUFFER_SIZE];
+        int status;
+        
+};
+
+
+class Socket_serveur
+{
+    public:
+
+        Socket_serveur(int d, int t, int p);
+        ~Socket_serveur();
+        void print_socket_serveur();
+        int create();
+        int destoy();
+        int connect_socket();
+        int bind_server_data(const char *addr, uint16_t  port);
+        int send_raw_data();
+        int start_serveur();
+        
+    private:
+
+        int fd_;
+        int domain_;
+        int type_;
+        int protocol_;
+        struct sockaddr_in addr;
+        char read_buffer[BUFFER_SIZE];
+        char write_buffer[BUFFER_SIZE];
+        int status;
         
 };
 
