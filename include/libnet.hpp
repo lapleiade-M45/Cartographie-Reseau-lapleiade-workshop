@@ -83,6 +83,7 @@ class Socket_serveur
 };
 
 int ft_inet_addr(const char *addr);
+int *get_ip_range(string ip);
 
 
 #endif

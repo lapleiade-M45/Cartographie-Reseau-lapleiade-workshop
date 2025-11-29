@@ -36,7 +36,7 @@ int main(void)
     struct sockaddr_in addr;
 
     serveur.create();
-    serveur.bind_server_data("127.0.0.10", 8080);
+    serveur.bind_server_data("127.0.0.10", 8081);
     serveur.start_serveur();
 
 

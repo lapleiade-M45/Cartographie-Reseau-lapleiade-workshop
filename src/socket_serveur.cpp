@@ -52,6 +52,8 @@ int Socket_serveur::bind_server_data(const char *addr, uint16_t  port)
     return(0);
 }
 
+
+
 int Socket_serveur::start_serveur()
 {
     int csocket;
@@ -63,31 +65,37 @@ int Socket_serveur::start_serveur()
         perror("Listen error");
         return(1);
     }
-    cout << "serceur is lisning" << endl;
+    cout << "serveur is listen" << endl;
 
     socklen_t size =  sizeof(struct sockaddr_in);
 
-    if((csocket  = accept(this->fd_, (struct sockaddr *)&addr, &size)) < 0)
+    while (1)
     {
-        perror("accepte error");
-        return(1);
+        if((csocket  = accept(this->fd_, (struct sockaddr *)&addr, &size)) < 0)
+        {
+            perror("accepte error");
+            return(1);
+        }
+        cout << "receive message from " << csocket << endl;
+        
+        in_addr a =  (in_addr)addr.sin_addr;
+
+        char *ip = inet_ntoa(a);
+
+        cout << "ip: " << ip  << endl;
+        if((b_read = recv(csocket, this->read_buffer, BUFFER_SIZE - 1, 0)) < 0)
+        {
+            perror("read error");
+            return(1);
+
+        }
+        const char *response = "HTTP/1.0 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 11\r\n\r\nHello world";
+
+        write(csocket, response, strlen(response));
+        cout << "message: " << this->read_buffer << endl;
+        close(csocket);
     }
-    cout << "receive message from " << csocket << endl;
     
-    in_addr a =  (in_addr)addr.sin_addr;
-
-    char *ip = inet_ntoa(a);
-
-    cout << "ip: " << ip  << endl;
-
-    if((b_read = recv(csocket, this->read_buffer, BUFFER_SIZE - 1, 0)) < 0)
-    {
-        perror("read error");
-        return(1);
-
-    }
     
-
-    cout << "message: " << this->read_buffer << endl;
     return(0);
 }

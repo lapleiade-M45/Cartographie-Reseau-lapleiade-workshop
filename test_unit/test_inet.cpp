@@ -46,8 +46,14 @@ int inet_test()
 
 int main(void)
 {
-    if(inet_test() != 0);
-        return(0);
+    // if(inet_test() != 0);
+    //     return(0);
+    
+    string ip;
+    
+    cout << "Start get ip test" << endl;
 
+    ip = "192.168.1.0/24";
+    int *i = get_ip_range(ip);
     return(0);
 }
