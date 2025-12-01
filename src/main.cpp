@@ -39,8 +39,5 @@ int main(void)
     serveur.bind_server_data("127.0.0.10", 8081);
     serveur.start_serveur();
 
-
-   
-
     return(0);
 }

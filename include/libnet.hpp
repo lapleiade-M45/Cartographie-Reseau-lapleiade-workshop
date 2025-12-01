@@ -11,6 +11,7 @@
 #include <fcntl.h>
 #include <iostream>
 #include <assert.h>
+#include <array>
 #include <string.h>
 #include "libft.h"
 
@@ -82,8 +83,35 @@ class Socket_serveur
         
 };
 
-int ft_inet_addr(const char *addr);
+class Ip
+{
+    private:
+
+        
+        std::array<int, 4> ip;
+        int mask;
+  
+    public:
+        Ip(int A, int B, int C, int D, int masque) : ip{A, B, C, D}, mask(masque) {}
+        void print_ip(){
+            for(auto &member: this->ip)
+                cout << member << " ";
+            cout << endl;
+        }
+        void generate_ip()
+        {
+            int limit;
+
+
+
+        }
+};
+ 
+
 int *get_ip_range(string ip);
 
-
+uint32_t ft_inet_addr(const char *addr);
+uint32_t ft_reverse_bit(uint32_t n);
+uint32_t *gnr_range_ip(string ip_start, string ip_end, uint32_t *size);
+uint32_t ft_reverse_octets(uint32_t n);
 #endif

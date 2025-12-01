@@ -1,5 +1,69 @@
 #include "../include/libnet.hpp"
 
+
+/*
+    Inversion byte à byte
+
+    from :  11100000 11000010 10111001 00000110
+    to:     01100000 10011101 01000011 00000111     
+
+
+*/
+
+uint32_t ft_reverse_bit(uint32_t n)
+{
+    
+    int j; 
+    int bit;
+    uint32_t reverse_ip;
+    
+    if(n <= 0)
+        return(0);
+    j = 0;
+    bit = 31;
+    while (bit >= 0)
+    {
+        reverse_ip = reverse_ip >> bit;
+        reverse_ip |=  (n >> j) & 1 ;
+        reverse_ip = reverse_ip << bit;
+        j++;
+        bit--;
+    }
+    return(reverse_ip);
+}
+
+
+
+
+/*
+                    valeur       représentation binaire
+
+    entré:          112837344 =  00000110 10111001 11000010 11100000
+    sorti:          3770857734 = 11100000 11000010 10111001 00000110
+    mask binaire:   255 =        00000000 00000000 00000000 11111111
+    
+*/
+
+uint32_t ft_reverse_octets(uint32_t n)
+{
+    
+    uint32_t h;                     // commentaire
+    
+    ft_print_bit_32(n);
+    cout << n << endl;
+    h =  0;                         // h = 00000000 00000000 00000000 00000000
+    h |= (n >> 0) & 0x000000FF;     // h = 00000000 00000000 00000000 11100000
+    h = h << 8;                     // h = 00000000 00000000 11100000 00000000
+    h |= (n >> 8) & 0x000000FF;     // h = 00000000 00000000 11100000 11000010
+    h = h << 8;                     // h = 00000000 11100000 11000010 00000000 
+    h |= (n >> 16) & 0x000000FF;    // h = 00000000 11100000 11000010 10111001
+    h = h << 8;                     // h = 11100000 11000010 10111001 00000000 
+    h |= (n >> 24) & 0x000000FF;    // h = 11100000 11000010 10111001 00000110
+    ft_print_bit_32(h);
+    return(h);
+}
+
+
 static char **get_split_if_valide(const char *addr, int *split_len)
 {
     int i;
@@ -63,7 +127,7 @@ static char **get_split_if_valide(const char *addr, int *split_len)
 
 */
 
-int ft_inet_addr(const char *addr)
+uint32_t ft_inet_addr(const char *addr)
 {
     
     int     i;
@@ -73,11 +137,11 @@ int ft_inet_addr(const char *addr)
     int arr[] = {24,16,8,0};
 
     if(!addr)
-        return(-1);
+        return(0);
     addr_value = 0;
     split = get_split_if_valide(addr, &split_len);
     if(!split)
-        return(-1);
+        return(0);
     i = 0;
     while (i <= 3)
     {
@@ -91,97 +155,54 @@ int ft_inet_addr(const char *addr)
     return(addr_value);
 }
 
+#define PRIVATE_1 1
+#define PRIVATE_2 2
+#define PRIVATE_3 2
 
 /*
-    adresse type 192 . 168 . 1 . 0 / 24
+    les reseaux privées sont defini d'apres la rfc 1918
 
-    ip::=         address taille
-    taille::=     sep value
-    sep ::=         "/"
-    value ::=       ("24" | "16" | "8")
-    address::=      val sep2 val sep2 val sep2 val
-    sep2::=         "."
-    val::=          entier
-    entier::=       chiffre | chiffre chiffre | chiffre chiffre chiffre
-
+    PRIVATE_1       10.255.255.255  (10/8 prefix)
+    PRIVATE_2       172.31.255.255  (172.16/12 prefix)
+    PRIVATE_3       192.168.255.255 (192.168/16 prefix)
 */
 
-int get_subnetwork(string ip, char buffer[15], int mask)
+int get_ip_range(uint32_t range[2], int net_type)
 {
-    int dot;
+
+
+
+}
+
+uint32_t *gnr_range_ip(string ip_start, string ip_end, uint32_t *size)
+{
+
     int i;
-
-    if(mask == 24)
-        dot = 3;
-    else if(mask == 16)
-        dot = 2;
-    else
-        dot = 1;
+    uint32_t ip;
+    uint32_t *ips;
+    uint32_t ptr;
+    uint32_t start;
+    uint32_t end;
+    
+    
+    start = ft_reverse_octets(ft_inet_addr(ip_start.c_str()));
+    end = ft_reverse_octets(ft_inet_addr(ip_end.c_str()));
+   
+    ips = (uint32_t *)::malloc(sizeof(uint32_t) * (end - (start - 1)));
+    if(!ips)
+    {
+        cout << "Malloc error in generation" << endl;
+        return(NULL);
+    }
     i = 0;
-    while (ip.at(i) && dot > 0)
+    ptr = start;
+    while(i <= (end - start))
     {
-        ip.copy(&buffer[i],1, i);
-        if(buffer[i] == '.')
-            dot--;
+        ip  = ft_reverse_octets(ptr);
+        ips[i] = ip;
         i++;
+        (*size)++;
+        ptr++;
     }
-    buffer[i] = '\0';
-    return(i);
-}
-
-int *gen_ip(string ip, int mask)
-{
-
-    int idx;
-    char *value;
-    // 192.168.1.10
-    char buffer[16];
-
-    get_subnetwork(ip, buffer, mask);
-    cout << "buffer: " << buffer << endl;
-    
-
-    int i = 0;
-
-    idx = ((string)buffer).find_last_of('.') + 1;
-    while (i <= 255)
-    {
-        value = ft_itoa(i);
-        memcpy(&buffer[idx], value, ft_strlen(value));
-        buffer[idx + ft_strlen(value)] = '\0';
-        cout << buffer << endl;
-        i++;
-    }
-
-    return(NULL);
-
-
-}
-
-
-int *get_ip_range(string ip)
-{
-
-    int net_size_idx;
-    int net_size;
-    int split_len;
-
-    net_size_idx = ip.find_last_of('/');
-    if(net_size_idx < 0)
-    {
-        cout << "network size is missing" << endl;
-        return(NULL);
-    }
-    cout << "size idx: " << net_size_idx << endl;
-    net_size = ::atoi(&ip[net_size_idx + 1]);
-    if(net_size != 24 && net_size != 16 && net_size != 8)
-    {
-        cout << "This network size is not ipv4 compatible" << endl;
-        return(NULL);
-    }
-    string str = ip.substr(0, net_size_idx);
-    
-    int *arr_ip = gen_ip(str, net_size);
-        
-    return(NULL);
+    return(ips);
 }

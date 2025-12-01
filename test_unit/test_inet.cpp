@@ -38,22 +38,56 @@ int inet_test()
     
     assert(ft_inet_addr("255.0.255.0") == inet_addr("255.0.255.0"));
     assert(ft_inet_addr("100.200.150.50") == inet_addr("100.200.150.50"));
-    assert(ft_inet_addr("5.200.100.250") == inet_addr("5.200.100.250"));
+    assert(ft_inet_addr("192.168.0.255") == inet_addr("192.168.0.255"));
     // assert(ft_inet_addr("abc.def.ghi.jkl") == -1);
+    return(0);
+}
+
+
+
+void print_arr_int(int *arr)
+{
+    int i;
+
+    for(i = 0; i < 4; i++)
+        cout << arr[i]  << " " ;
+    cout << endl;
+
+}
+
+
+int generation_test()
+{
+    string ip_start = "192.168.255.245";
+    string ip_end = "192.168.255.255";
+
+    std::array< string, 11> arr = {"192.168.255.245","192.168.255.246","192.168.255.247","192.168.255.248","192.168.255.249","192.168.255.250","192.168.255.251","192.168.255.252","192.168.255.253","192.168.255.254","192.168.255.255"};
+    uint32_t size;
+    size = 0;
+    uint32_t *ar = gnr_range_ip(ip_start, ip_end, &size);
+
+    if(size > 0)
+    {
+        cout << "start test size " << size  << endl;
+        int i = 0;
+        while (i < size)
+        {
+            in_addr_t test = inet_addr(arr.at(i).c_str());
+            cout << " string: " << arr.at(i).c_str() << " uint32 og " << test << " own version " << ar[i] << endl;
+            assert(ar[i] == (uint32_t)test);
+            i++;
+        }
+        
+    }
+    cout << "end test" << endl;  
     return(0);
 }
 
 
 int main(void)
 {
-    // if(inet_test() != 0);
-    //     return(0);
-    
-    string ip;
-    
-    cout << "Start get ip test" << endl;
 
-    ip = "192.168.1.0/24";
-    int *i = get_ip_range(ip);
+    generation_test();
+
     return(0);
 }
