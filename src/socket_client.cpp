@@ -1,4 +1,4 @@
-#include "../include/libnet.hpp"
+#include "../include/libip.hpp"
 
 Socket_client::Socket_client(int d, int t, int p) :domain_(d),type_(t),protocol_(p), fd_(-1) { this->addr = {0}; this->status = CLOSE;};
 
