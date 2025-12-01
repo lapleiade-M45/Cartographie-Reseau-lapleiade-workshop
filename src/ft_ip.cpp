@@ -158,6 +158,8 @@ uint32_t ft_inet_addr(const char *addr)
     PRIVATE_1       10.255.255.255  (10/8 prefix)
     PRIVATE_2       172.31.255.255  (172.16/12 prefix)
     PRIVATE_3       192.168.255.255 (192.168/16 prefix)
+    ALL             0.0.0.0         (0/0 prefix)
+    CUSTOM          plage personalisé
 */
 
 uint32_t get_network_size(string ip_start, string ip_end)
