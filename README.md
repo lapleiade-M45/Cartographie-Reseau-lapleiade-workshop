@@ -16,7 +16,9 @@ uint32_t *gnr_range_ip(int network_type, const char *ip_start, const char *ip_en
 
 ```
 
-La fonction *gnr_range_ip genere un range d'ip destination pret à être utilisé dans les header ip;
+La fonction *gnr_range_ip genere un range d'ip destination pret à être utilisé dans les header ip.
+
+ip_start et ip_end doivent être égal à NULL si network_type != CUSTOM 
 
 
 /*
