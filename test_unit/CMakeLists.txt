@@ -3,7 +3,7 @@ include_directories("include")
 include ( CTest )
 enable_testing ()
 
-set(SRCS "../src/ft_inet.cpp" "../src/socket_client.cpp" test_inet.cpp)
+set(SRCS "../src/ft_ip.cpp" "../src/socket_client.cpp" test_inet.cpp)
 
 add_executable(inet_test ${SRCS})
 

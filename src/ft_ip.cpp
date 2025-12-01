@@ -33,8 +33,6 @@ uint32_t ft_reverse_bit(uint32_t n)
 }
 
 
-
-
 /*
                     valeur       représentation binaire
 
@@ -155,9 +153,7 @@ uint32_t ft_inet_addr(const char *addr)
     return(addr_value);
 }
 
-#define PRIVATE_1 1
-#define PRIVATE_2 2
-#define PRIVATE_3 2
+
 
 /*
     les reseaux privées sont defini d'apres la rfc 1918
@@ -167,36 +163,79 @@ uint32_t ft_inet_addr(const char *addr)
     PRIVATE_3       192.168.255.255 (192.168/16 prefix)
 */
 
-int get_ip_range(uint32_t range[2], int net_type)
+uint32_t get_network_size(string ip_start, string ip_end)
 {
+    uint32_t start;
+    uint32_t end;
 
+    start = ft_reverse_octets(ft_inet_addr(ip_start.c_str()));
+    end = ft_reverse_octets(ft_inet_addr(ip_end.c_str()));
 
-
+    return(end - (start - 1));
 }
 
-uint32_t *gnr_range_ip(string ip_start, string ip_end, uint32_t *size)
+void get_ip_range(uint32_t range[2], int net_type, const char *ip_start, const char *ip_end)
+{
+    uint32_t start;
+
+    if(net_type == ALL)
+    {
+        range[0] = ft_reverse_octets(ft_inet_addr("0.0.0.0"));
+        range[1] = ft_reverse_octets(ft_inet_addr("255.255.255.255"));
+    }
+    else if(net_type == PRIVATE_1)
+    {
+        range[0] = ft_reverse_octets(ft_inet_addr("10.0.0.0"));
+        range[1] = ft_reverse_octets(ft_inet_addr("10.255.255.255"));
+    }
+    else if(net_type == PRIVATE_2)
+    {
+        range[0] = ft_reverse_octets(ft_inet_addr("172.31.0.0"));
+        range[1] = ft_reverse_octets(ft_inet_addr("172.31.255.255"));
+    }
+    else if(net_type == PRIVATE_3)
+    {
+        range[0] = ft_reverse_octets(ft_inet_addr("192.168.0.0"));
+        range[1] = ft_reverse_octets(ft_inet_addr("192.168.255.255"));
+    }
+    else if(net_type == CUSTOM)
+    {
+        range[0] = ft_reverse_octets(ft_inet_addr(ip_start));
+        range[1] = ft_reverse_octets(ft_inet_addr(ip_end));
+    }
+}
+
+
+
+uint32_t *gnr_range_ip(int network_type, const char *ip_start, const char *ip_end, uint32_t *size)
 {
 
     int i;
     uint32_t ip;
     uint32_t *ips;
     uint32_t ptr;
-    uint32_t start;
-    uint32_t end;
+    uint32_t range[2];
     
-    
-    start = ft_reverse_octets(ft_inet_addr(ip_start.c_str()));
-    end = ft_reverse_octets(ft_inet_addr(ip_end.c_str()));
-   
-    ips = (uint32_t *)::malloc(sizeof(uint32_t) * (end - (start - 1)));
+    if(network_type == CUSTOM && (!ip_start || !ip_end))
+    {
+        cout << "Custom format error" << endl;
+        return(NULL);
+    }
+    get_ip_range(range, network_type, ip_start, ip_end);
+    if(range[1] <= range[0])
+    {
+        cout << "Custom format error, l'ip de depart est plus grande que l'ip d'arrivé" << endl;
+        return(NULL);
+    }
+    ips = (uint32_t *)::malloc(sizeof(uint32_t) * (range[1] - (range[0] - 1)));
     if(!ips)
     {
         cout << "Malloc error in generation" << endl;
         return(NULL);
     }
     i = 0;
-    ptr = start;
-    while(i <= (end - start))
+    ptr = range[0];
+    while(i <= range[1] - range[0])
     {
         ip  = ft_reverse_octets(ptr);
         ips[i] = ip;
@@ -204,5 +243,6 @@ uint32_t *gnr_range_ip(string ip_start, string ip_end, uint32_t *size)
         (*size)++;
         ptr++;
     }
+    assert(*size =  (range[1] - (range[0] - 1)));
     return(ips);
 }
